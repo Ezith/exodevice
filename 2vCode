@@ -1,0 +1,57 @@
+
+#include <Servo.h> 
+
+Servo myservo1;
+Servo myservo2;
+Servo myservo3;
+
+int potpin = 0;  
+int lecturaanterior=0;
+int lecturanueva;
+int valorservo1=0;
+int valorservo2=0;
+int valorservo3=0;
+int incremento1=0;
+int incremento2=0;
+int incremento3=0;
+void setup() 
+{ 
+      myservo1.attach(9);  
+      myservo1.write(valorservo1);
+      myservo2.attach(10);  
+      myservo2.write(valorservo2);
+      myservo3.attach(11);  
+      myservo3.write(valorservo3);
+      delay(15);
+} 
+
+void loop() 
+{ 
+      lecturanueva = analogRead(potpin);            
+      if (lecturaanterior <250 && lecturanueva >= 250){    // si la lectura analógica ha saltado por encima de 250
+            if(valorservo1==0 || incremento1<0)            // Si está parado en posición 0 o esta decrementando, cambiamos a incremento.
+                  incremento1=1;
+            else                                           // Si no, cambiamos a decremento.
+                  incremento1=-1;
+      }
+      if (lecturaanterior <500 && lecturanueva >= 500){     
+            incremento2 = valorservo2==0 || incremento2<0 ? 1 : -1; // otra forma de escribir el mismo if anterior
+      }
+      if (lecturaanterior <750 && lecturanueva >= 750){     // igual que los otros dos
+            incremento3 = valorservo3==0 || incremento3<0 ? 1 : -1;
+      }
+      lecturaanterior=lecturanueva;
+      
+      // Incrementamos los valores de servo según su estado (subiendo, parado, bajando)
+      valorservo1 += incremento1;
+      valorservo2 += incremento2;
+      valorservo3 += incremento3;
+      // Si el servo está en un extremo u otro, detenemos incremento o decremento
+      if (valorservo1<=0 || valorservo1>=180) incremento1=0;
+      if (valorservo2<=0 || valorservo2>=180) incremento2=0;
+      if (valorservo3<=0 || valorservo3>=180) incremento3=0;
+      // Escribimos los valores correspondientes en cada servo
+      myservo1.write(valorservo1);
+      myservo2.write(valorservo2);
+      myservo3.write(valorservo3);
+} 
